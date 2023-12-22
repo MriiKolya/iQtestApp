@@ -51,13 +51,14 @@ class _QuestionListState extends State<QuestionList> {
                   children: [
                     Align(
                       alignment: Alignment.topRight,
-                      child: TextButton(
-                        onPressed: () {
-                          navigationToNextPage();
-                        },
-                        child: Text(
-                          'Skip',
-                          style: Theme.of(context).textTheme.bodyMedium,
+                      child: GestureDetector(
+                        onTap: () => navigationToNextPage(),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 30, bottom: 30),
+                          child: Text(
+                            'Skip',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                         ),
                       ),
                     ),
@@ -74,7 +75,7 @@ class _QuestionListState extends State<QuestionList> {
               );
             },
             options: CarouselOptions(
-                initialPage: 0,
+                initialPage: _currentIndex,
                 scrollPhysics: const NeverScrollableScrollPhysics(),
                 viewportFraction: 1,
                 height: widget.constraints.maxHeight * 0.8,

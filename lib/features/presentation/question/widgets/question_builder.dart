@@ -3,12 +3,13 @@ import 'package:test_iq/features/constant/constant_color.dart';
 import 'package:test_iq/features/presentation/domain/model/question_model.dart';
 
 class QuestionBuilder extends StatelessWidget {
-  const QuestionBuilder(
-      {super.key,
-      required this.constraints,
-      required this.listquestion,
-      required this.itemIndex,
-      required this.onTap});
+  const QuestionBuilder({
+    super.key,
+    required this.constraints,
+    required this.listquestion,
+    required this.itemIndex,
+    required this.onTap,
+  });
 
   final BoxConstraints constraints;
   final void Function(String selectedOption) onTap;
@@ -27,6 +28,7 @@ class QuestionBuilder extends StatelessWidget {
               width: double.infinity,
               child: Text(
                 listquestion[itemIndex].question.toString(),
+                textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
@@ -51,12 +53,14 @@ class QuestionBuilder extends StatelessWidget {
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: GestureDetector(
-                        onTap: () =>
-                            onTap(listquestion[itemIndex].options[index]),
+                        onTap: () => onTap(
+                          listquestion[itemIndex].options[index],
+                        ),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: ConstantColor.primaryColor,
-                              borderRadius: BorderRadius.circular(20)),
+                            color: ConstantColor.primaryColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Center(
                               child: FittedBox(
                             child: Text(
