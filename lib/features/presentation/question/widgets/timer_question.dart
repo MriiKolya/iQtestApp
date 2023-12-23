@@ -44,7 +44,7 @@ class _TimerQuestionState extends State<TimerQuestion> {
 
   @override
   void dispose() {
-    stopTimer(); // Останавливаем таймер при уничтожении виджета
+    stopTimer();
     super.dispose();
   }
 }

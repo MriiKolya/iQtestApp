@@ -1,9 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_iq/config/router/router_name.dart';
+import 'package:test_iq/core/bloc/iq_counter_bloc.dart';
 import 'package:test_iq/features/presentation/domain/model/question_model.dart';
-import 'package:test_iq/features/presentation/question/widgets/number_indicator_page.dart';
-import 'package:test_iq/features/presentation/question/widgets/question_builder.dart';
-import 'package:test_iq/features/presentation/question/widgets/timer_question.dart';
+import 'package:test_iq/features/presentation/question/widgets/widgets.dart';
 
 class QuestionList extends StatefulWidget {
   const QuestionList({
@@ -22,9 +24,15 @@ class QuestionList extends StatefulWidget {
 class _QuestionListState extends State<QuestionList> {
   final _controllerCarousel = CarouselController();
 
-  void navigationToNextPage() {
-    if (_currentIndex + 1 < widget.listquestion.length) {
-      _controllerCarousel.jumpToPage(_currentIndex + 1);
+  void navigationPage([int? index]) {
+    if (index == null) {
+      if (_currentIndex + 1 < widget.listquestion.length) {
+        _controllerCarousel.jumpToPage(_currentIndex + 1);
+      } else {
+        context.go(context.namedLocation(AppRouteConstants.resultIQRouteName));
+      }
+    } else {
+      _controllerCarousel.jumpToPage(index);
     }
   }
 
@@ -34,11 +42,27 @@ class _QuestionListState extends State<QuestionList> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        NumberIndicatorPage(
-          itemCount: widget.listquestion.length,
-          currentIndex: _currentIndex,
-          constraints: widget.constraints,
-          controllerCarousel: _controllerCarousel,
+        BlocConsumer<IqCounterBloc, IqCounterState>(
+          listener: (context, state) {},
+          builder: (BuildContext context, IqCounterState state) {
+            return NumberIndicatorPage(
+              skippedQuestionIndex: state.listSkippedQuestionIndex,
+              itemCount: widget.listquestion.length,
+              currentIndex: _currentIndex,
+              constraints: widget.constraints,
+              controllerCarousel: _controllerCarousel,
+              navigationNumber: (index) {
+                context.read<IqCounterBloc>().add(
+                      CalculatingIQ(
+                        question: widget.listquestion[_currentIndex],
+                        questionIndex: _currentIndex,
+                      ),
+                    );
+
+                navigationPage(index);
+              },
+            );
+          },
         ),
         Expanded(
           child: CarouselSlider.builder(
@@ -52,7 +76,13 @@ class _QuestionListState extends State<QuestionList> {
                     Align(
                       alignment: Alignment.topRight,
                       child: GestureDetector(
-                        onTap: () => navigationToNextPage(),
+                        onTap: () {
+                          context.read<IqCounterBloc>().add(CalculatingIQ(
+                                question: widget.listquestion[itemIndex],
+                                questionIndex: itemIndex,
+                              ));
+                          navigationPage();
+                        },
                         child: Padding(
                           padding: const EdgeInsets.only(right: 30, bottom: 30),
                           child: Text(
@@ -67,7 +97,12 @@ class _QuestionListState extends State<QuestionList> {
                       listquestion: widget.listquestion,
                       itemIndex: itemIndex,
                       onTap: (String selectedOption) {
-                        navigationToNextPage();
+                        navigationPage();
+                        context.read<IqCounterBloc>().add(CalculatingIQ(
+                              answerQuestion: selectedOption,
+                              question: widget.listquestion[itemIndex],
+                              questionIndex: itemIndex,
+                            ));
                       },
                     )
                   ],

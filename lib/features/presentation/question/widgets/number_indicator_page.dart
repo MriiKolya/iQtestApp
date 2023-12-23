@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter/material.dart';
+
 import 'package:test_iq/features/constant/constant_color.dart';
 
 class NumberIndicatorPage extends StatelessWidget {
@@ -9,12 +10,16 @@ class NumberIndicatorPage extends StatelessWidget {
     required this.controllerCarousel,
     required this.currentIndex,
     required this.itemCount,
+    required this.skippedQuestionIndex,
+    required this.navigationNumber,
   });
 
   final BoxConstraints constraints;
   final CarouselController controllerCarousel;
   final int currentIndex;
   final int itemCount;
+  final List<int> skippedQuestionIndex;
+  final void Function(int index) navigationNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -28,29 +33,35 @@ class NumberIndicatorPage extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           itemBuilder: (context, index) {
             return GestureDetector(
+              onTap: () => navigationNumber(index),
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: constraints.maxWidth / 40,
                 ),
                 child: CircleAvatar(
                   radius: 15,
-                  backgroundColor: currentIndex == index
-                      ? ConstantColor.primaryColor
-                      : Colors.grey,
+                  backgroundColor: _getIndicatorColor(index),
                   child: Text(
                     (index + 1).toString(),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
               ),
-              onTap: () {
-                controllerCarousel.jumpToPage(index);
-              },
             );
           },
           itemCount: itemCount,
         ),
       ),
     );
+  }
+
+  Color _getIndicatorColor(int index) {
+    if (index == currentIndex) {
+      return ConstantColor.primaryColor;
+    } else if (skippedQuestionIndex.contains(index)) {
+      return Colors.red;
+    } else {
+      return Colors.grey;
+    }
   }
 }

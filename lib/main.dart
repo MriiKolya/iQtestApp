@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_iq/config/router/app_router.dart';
 import 'package:test_iq/config/theme/dart_theme.dart';
+import 'package:test_iq/core/bloc/iq_counter_bloc.dart';
 import 'package:test_iq/features/presentation/question/bloc/question_bloc.dart';
 import 'package:test_iq/features/presentation/repository/question_repository.dart';
 
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
               GetQuestionList(),
             ),
         ),
+        BlocProvider<IqCounterBloc>(
+          create: (context) => IqCounterBloc(),
+        )
       ],
       child: MaterialApp.router(
         theme: dartTheme(),

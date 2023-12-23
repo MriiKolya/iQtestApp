@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_iq/config/router/router_name.dart';
 import 'package:test_iq/features/presentation/question/view/question_screen.dart';
-import 'package:test_iq/features/presentation/welcome_screen/welcome_screen.dart';
+import 'package:test_iq/features/presentation/result_iq/result_screen.dart';
+import 'package:test_iq/features/presentation/welcome/welcome_screen.dart';
 
 class AppRouter {
   late final GoRouter router = GoRouter(
@@ -17,7 +18,14 @@ class AppRouter {
       GoRoute(
         path: '/question',
         name: AppRouteConstants.questionRouteName,
-        builder: (BuildContext contex, GoRouterState state) => const QuestionScreen(),
+        builder: (BuildContext contex, GoRouterState state) =>
+            const QuestionScreen(),
+      ),
+      GoRoute(
+        path: '/resultIQ',
+        name: AppRouteConstants.resultIQRouteName,
+        builder: (BuildContext contex, GoRouterState state) =>
+            const ResultIQScreen(),
       ),
     ],
   );
