@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:test_iq/config/router/router_name.dart';
-import 'package:test_iq/core/bloc/iq_counter_bloc.dart';
+import 'package:test_iq/core/bloc/check_all_questions_answered/verification_questions_answered_bloc.dart';
+import 'package:test_iq/core/bloc/iq_counter/iq_counter_bloc.dart';
+import 'package:test_iq/core/widgets/snack_bar_message.dart';
 import 'package:test_iq/features/presentation/domain/model/question_model.dart';
 import 'package:test_iq/features/presentation/question/widgets/widgets.dart';
 
@@ -23,30 +23,19 @@ class QuestionList extends StatefulWidget {
 
 class _QuestionListState extends State<QuestionList> {
   final _controllerCarousel = CarouselController();
-
-  void navigationPage([int? index]) {
-    if (index == null) {
-      if (_currentIndex + 1 < widget.listquestion.length) {
-        _controllerCarousel.jumpToPage(_currentIndex + 1);
-      } else {
-        context.go(context.namedLocation(AppRouteConstants.resultIQRouteName));
-      }
-    } else {
-      _controllerCarousel.jumpToPage(index);
-    }
-  }
-
+  List<int> listsAnsweredQuestionIndex = [];
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        BlocConsumer<IqCounterBloc, IqCounterState>(
-          listener: (context, state) {},
+        BlocBuilder<IqCounterBloc, IqCounterState>(
           builder: (BuildContext context, IqCounterState state) {
+            listsAnsweredQuestionIndex = state.listsAnsweredQuestionIndex;
             return NumberIndicatorPage(
-              skippedQuestionIndex: state.listSkippedQuestionIndex,
+              listsAnsweredQuestionIndex: listsAnsweredQuestionIndex,
+              skippedQuestionIndexes: state.listSkippedQuestionIndexes,
               itemCount: widget.listquestion.length,
               currentIndex: _currentIndex,
               constraints: widget.constraints,
@@ -58,7 +47,6 @@ class _QuestionListState extends State<QuestionList> {
                         questionIndex: _currentIndex,
                       ),
                     );
-
                 navigationPage(index);
               },
             );
@@ -67,30 +55,24 @@ class _QuestionListState extends State<QuestionList> {
         Expanded(
           child: CarouselSlider.builder(
             carouselController: _controllerCarousel,
-            itemCount: 10,
+            itemCount: widget.listquestion.length,
             itemBuilder:
                 (BuildContext context, int itemIndex, int pageViewIndex) {
               return Scaffold(
                 body: Column(
                   children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          context.read<IqCounterBloc>().add(CalculatingIQ(
-                                question: widget.listquestion[itemIndex],
-                                questionIndex: itemIndex,
-                              ));
+                    ButtonSkipedQuestion(
+                      onTap: (int? index) {
+                        context.read<IqCounterBloc>().add(CalculatingIQ(
+                              question: widget.listquestion[itemIndex],
+                              questionIndex: itemIndex,
+                            ));
+                        if (index == null) {
                           navigationPage();
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 30, bottom: 30),
-                          child: Text(
-                            'Skip',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      ),
+                        } else {
+                          navigationPage(index);
+                        }
+                      },
                     ),
                     QuestionBuilder(
                       constraints: widget.constraints,
@@ -126,5 +108,49 @@ class _QuestionListState extends State<QuestionList> {
         const TimerQuestion()
       ],
     );
+  }
+
+  void navigationPage([int? index]) {
+    // Если индекс передан
+    if (index != null) {
+      // Проверяем, был ли вопрос с таким индексом уже отвечен
+      if (listsAnsweredQuestionIndex.contains(index)) {
+        SnackBarMessage.showSnackBarException(
+          message: 'that question has already been answered.',
+          context: context,
+        );
+        return;
+      }
+
+      // Если индекс не совпадает с текущим, переходим к указанному вопросу
+      if (index != _currentIndex) {
+        _controllerCarousel.jumpToPage(index);
+      }
+      return;
+    }
+
+    // Переход к следующему нерешенному вопросу в карусели
+    if (_currentIndex < widget.listquestion.length) {
+      int nextUnansweredIndex = _currentIndex + 1;
+
+      // Находим следующий нерешенный вопрос
+      while (nextUnansweredIndex < widget.listquestion.length &&
+          listsAnsweredQuestionIndex.contains(nextUnansweredIndex)) {
+        nextUnansweredIndex++;
+      }
+
+      // Если нашли нерешенный вопрос, переходим к нему
+      if (nextUnansweredIndex < widget.listquestion.length) {
+        _controllerCarousel.jumpToPage(nextUnansweredIndex);
+      } else {
+        context.read<VerificationQuestionsAnsweredBloc>().add(
+              CheckAllQuestionsAnswered(
+                listqQuestion: widget.listquestion,
+                listsAnsweredQuestionIndex: listsAnsweredQuestionIndex,
+              ),
+            );
+      }
+      return;
+    }
   }
 }

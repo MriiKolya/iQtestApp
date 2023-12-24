@@ -10,15 +10,17 @@ class NumberIndicatorPage extends StatelessWidget {
     required this.controllerCarousel,
     required this.currentIndex,
     required this.itemCount,
-    required this.skippedQuestionIndex,
+    required this.skippedQuestionIndexes,
     required this.navigationNumber,
+    required this.listsAnsweredQuestionIndex,
   });
 
   final BoxConstraints constraints;
   final CarouselController controllerCarousel;
   final int currentIndex;
   final int itemCount;
-  final List<int> skippedQuestionIndex;
+  final List<int> skippedQuestionIndexes;
+  final List<int> listsAnsweredQuestionIndex;
   final void Function(int index) navigationNumber;
 
   @override
@@ -58,8 +60,10 @@ class NumberIndicatorPage extends StatelessWidget {
   Color _getIndicatorColor(int index) {
     if (index == currentIndex) {
       return ConstantColor.primaryColor;
-    } else if (skippedQuestionIndex.contains(index)) {
-      return Colors.red;
+    } else if (listsAnsweredQuestionIndex.contains(index)) {
+      return ConstantColor.successColor;
+    } else if (skippedQuestionIndexes.contains(index)) {
+      return ConstantColor.exceptionColor;
     } else {
       return Colors.grey;
     }

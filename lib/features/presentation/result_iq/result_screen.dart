@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_iq/core/bloc/iq_counter_bloc.dart';
+import 'package:test_iq/core/bloc/iq_counter/iq_counter_bloc.dart';
 
 class ResultIQScreen extends StatelessWidget {
   const ResultIQScreen({super.key});
