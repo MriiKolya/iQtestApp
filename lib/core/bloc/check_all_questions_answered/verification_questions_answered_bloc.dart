@@ -10,9 +10,11 @@ class VerificationQuestionsAnsweredBloc extends Bloc<
   VerificationQuestionsAnsweredBloc()
       : super(VerificationQuestionsAnsweredState.initial()) {
     on<CheckAllQuestionsAnswered>(_onCheckIsAllQuestionsAnswered);
+    on<ResetVerificationQuestionsAnsweredBloc>(
+        _onResetVerificationQuestionsAnsweredBloc);
   }
 
-  void _onCheckIsAllQuestionsAnswered(CheckAllQuestionsAnswered event,
+  _onCheckIsAllQuestionsAnswered(CheckAllQuestionsAnswered event,
       Emitter<VerificationQuestionsAnsweredState> emit) {
     if (event.listsAnsweredQuestionIndex.length + 1 ==
         event.listqQuestion.length) {
@@ -28,5 +30,11 @@ class VerificationQuestionsAnsweredBloc extends Bloc<
       emit(VerificationQuestionsAnsweredState.noAllQuestionsAnswered(
           listSkippedQuestionIndexes: listSkippedQuestionIndex));
     }
+  }
+
+  _onResetVerificationQuestionsAnsweredBloc(
+      ResetVerificationQuestionsAnsweredBloc event,
+      Emitter<VerificationQuestionsAnsweredState> emit) {
+    emit(VerificationQuestionsAnsweredState.initial());
   }
 }

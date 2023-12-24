@@ -26,3 +26,5 @@ class CalculatingIQ extends IqCounterEvent {
     }
   }
 }
+
+class ResetIqCounterBloc extends IqCounterEvent {}

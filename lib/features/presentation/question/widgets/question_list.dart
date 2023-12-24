@@ -25,6 +25,8 @@ class _QuestionListState extends State<QuestionList> {
   final _controllerCarousel = CarouselController();
   List<int> listsAnsweredQuestionIndex = [];
   int _currentIndex = 0;
+  late String iqResult;
+  late String timeResult = '0';
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,7 @@ class _QuestionListState extends State<QuestionList> {
       children: [
         BlocBuilder<IqCounterBloc, IqCounterState>(
           builder: (BuildContext context, IqCounterState state) {
+            iqResult = state.iqCounter.toString();
             listsAnsweredQuestionIndex = state.listsAnsweredQuestionIndex;
             return NumberIndicatorPage(
               listsAnsweredQuestionIndex: listsAnsweredQuestionIndex,
@@ -62,16 +65,14 @@ class _QuestionListState extends State<QuestionList> {
                 body: Column(
                   children: [
                     ButtonSkipedQuestion(
-                      onTap: (int? index) {
+                      timeResult: timeResult,
+                      iqResult: iqResult,
+                      onTap: () {
                         context.read<IqCounterBloc>().add(CalculatingIQ(
                               question: widget.listquestion[itemIndex],
                               questionIndex: itemIndex,
                             ));
-                        if (index == null) {
-                          navigationPage();
-                        } else {
-                          navigationPage(index);
-                        }
+                        navigationPage();
                       },
                     ),
                     QuestionBuilder(
@@ -105,7 +106,11 @@ class _QuestionListState extends State<QuestionList> {
                 }),
           ),
         ),
-        const TimerQuestion()
+        TimerQuestion(
+          updateTimer: (String updateTimer) {
+            timeResult = updateTimer;
+          },
+        )
       ],
     );
   }

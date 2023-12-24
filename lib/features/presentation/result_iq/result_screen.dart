@@ -1,29 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_iq/core/bloc/iq_counter/iq_counter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:test_iq/config/router/router_name.dart';
 
 class ResultIQScreen extends StatelessWidget {
-  const ResultIQScreen({super.key});
+  final int iqResult;
+  final String timeResult;
+  const ResultIQScreen({
+    super.key,
+    required this.iqResult,
+    required this.timeResult,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: BlocBuilder<IqCounterBloc, IqCounterState>(
-            builder: (BuildContext context, IqCounterState state) {
-              return Center(
-                child: Column(children: [
-                  Text(
-                    'You result IQ ${state.iqCounter}',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ]),
-              );
-            },
-          ),
+          child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            Text(
+              'You result IQ $iqResult',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            Text(
+              'You result time $timeResult',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () {
+                context.go(
+                    context.namedLocation(AppRouteConstants.welcomeRouteName));
+              },
+              child: const Text('Turn Back'),
+            ),
+            const Spacer(),
+          ],
         ),
-      ),
+      )),
     );
   }
 }

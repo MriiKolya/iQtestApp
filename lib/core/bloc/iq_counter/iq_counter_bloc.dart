@@ -10,9 +10,10 @@ class IqCounterBloc extends Bloc<IqCounterEvent, IqCounterState> {
   List<int> listsAnsweredQuestionIndex = [];
   IqCounterBloc() : super(IqCounterState.initial()) {
     on<CalculatingIQ>(_onCalculationIQ);
+    on<ResetIqCounterBloc>(_onResetIqCounterBloc);
   }
 
-  void _onCalculationIQ(CalculatingIQ event, Emitter<IqCounterState> emit) {
+  _onCalculationIQ(CalculatingIQ event, Emitter<IqCounterState> emit) {
     if (event.answerQuestion == event.question.correctAnswer) {
       listsSkippedQuestionIndex.remove(event.questionIndex);
       listsAnsweredQuestionIndex.add(event.questionIndex);
@@ -37,5 +38,12 @@ class IqCounterBloc extends Bloc<IqCounterEvent, IqCounterState> {
         listsAnsweredQuestionIndex: List.from(listsAnsweredQuestionIndex),
       ));
     }
+  }
+
+  _onResetIqCounterBloc(
+      ResetIqCounterBloc event, Emitter<IqCounterState> emit) {
+    listsSkippedQuestionIndex.clear();
+    listsAnsweredQuestionIndex.clear();
+    emit(IqCounterState.initial());
   }
 }

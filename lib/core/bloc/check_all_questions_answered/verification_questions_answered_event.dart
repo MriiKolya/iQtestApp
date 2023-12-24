@@ -13,3 +13,6 @@ class CheckAllQuestionsAnswered extends VerificationQuestionsAnsweredEvent {
     required this.listsAnsweredQuestionIndex,
   });
 }
+
+class ResetVerificationQuestionsAnsweredBloc
+    extends VerificationQuestionsAnsweredEvent {}

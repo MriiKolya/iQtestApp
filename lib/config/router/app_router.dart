@@ -12,20 +12,24 @@ class AppRouter {
       GoRoute(
         path: '/welcome',
         name: AppRouteConstants.welcomeRouteName,
-        builder: (BuildContext contex, GoRouterState state) =>
+        builder: (BuildContext context, GoRouterState state) =>
             const WelcomeScreen(),
       ),
       GoRoute(
         path: '/question',
         name: AppRouteConstants.questionRouteName,
-        builder: (BuildContext contex, GoRouterState state) =>
+        builder: (BuildContext context, GoRouterState state) =>
             const QuestionScreen(),
       ),
       GoRoute(
-        path: '/resultIQ',
+        path: '/resultIQ/:iqResult/:timeResult',
         name: AppRouteConstants.resultIQRouteName,
-        builder: (BuildContext contex, GoRouterState state) =>
-            const ResultIQScreen(),
+        builder: (BuildContext context, GoRouterState state) {
+          return ResultIQScreen(
+            iqResult: int.parse(state.pathParameters['iqResult']!),
+            timeResult: state.pathParameters['timeResult'].toString(),
+          );
+        },
       ),
     ],
   );
