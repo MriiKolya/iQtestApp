@@ -50,16 +50,4 @@ class QuestionState extends Equatable {
 
   @override
   List<Object?> get props => [status, textError, listquestion];
-
-  QuestionState copyWith({
-    List<QuestionModel>? listquestion,
-    QuestionStatus? status,
-    String? textError,
-  }) {
-    return QuestionState(
-      listquestion: listquestion ?? this.listquestion,
-      status: status ?? this.status,
-      textError: textError ?? this.textError,
-    );
-  }
 }
